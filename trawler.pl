@@ -17,8 +17,13 @@ my $threads = $ARGV[2];
 my $green = "\033[1;31m";
 my $blue = "\033[0;36m";
 my $clear = "\033[0m";
-	
-main();
+
+
+$SIG{'INT'} = sub { 
+	sleep 1 while threads->list();
+	die "Finished.\n";
+};
+
 
 sub genaddress(){
 	
@@ -38,39 +43,42 @@ sub genaddress(){
 
 
 sub connect {
-		my $target = &genaddress();
+	my $target = &genaddress();
 		
-		my $sock = new IO::Socket::INET (
-			 PeerAddr => $target,
-			 PeerPort => $port,
-			 Proto => 'tcp',
-			 Timeout => $time
-		);
+	my $sock = new IO::Socket::INET (
+		 PeerAddr => $target,
+		 PeerPort => $port,
+		 Proto => 'tcp',
+		 Timeout => $time
+	);
 
-		if($sock) {
-			print "[${green}+${clear}] Open\t${green}${target}:${port}${clear}\n";
-			open(DAT, ">>result.txt") || die("Cannot Open Output File");
-			print DAT "$target $port\n";
-			close(DAT);
-			close($sock);
+	if($sock) {
+		print "[${green}+${clear}] Open\t${green}${target}:${port}${clear}\n";
+		open(DAT, ">>result.txt") || die("Cannot Open Output File");
+		print DAT "$target $port\n";
+		close(DAT);
+		close($sock);
 			
-		} else {
-			print "[${blue}-${clear}] Closed\t${target}:${port}\n";
-		}
+	} else {
+		print "[${blue}-${clear}] Closed\t${target}:${port}\n";
+	}
 		
 		threads->self()->detach;
 }
 
-sub main {
-	print "-"x50 ."\n";
-	print "    Started random seek\n";
-	print "-"x50 ."\n";
-	print "    port=${port}\t time=". $time*1000 . "ms\t threads=". $threads . "\n";
-	print "-"x50 ."\n";
+
+
+package main;
+
+print "-"x50 ."\n";
+print "    Started random seek\n";
+print "-"x50 ."\n";
+print "    port=${port}\t time=". $time*1000 . "ms\t threads=". $threads . "\n";
+print "-"x50 ."\n";
 	
-	while(1){
-		if (scalar(threads->list()) < $threads) {
-			my $thr = threads->new(\&connect);
-		}
+while(1){
+	if (scalar(threads->list()) < $threads) {
+		threads->new(\&connect);
 	}
 }
+
