@@ -9,6 +9,7 @@ if ($#ARGV < 2) {
 	exit 2;
 }
 
+
 my $port = $ARGV[0];
 my $time = $ARGV[1];
 my $threads = $ARGV[2];
@@ -21,6 +22,7 @@ my $clear = "\033[0m";
 
 $SIG{'INT'} = sub { 
 	sleep 1 while threads->list();
+	close(DAT);
 	die "Finished.\n";
 };
 
@@ -54,9 +56,7 @@ sub connect {
 
 	if($sock) {
 		print "[${green}+${clear}] Open\t${green}${target}:${port}${clear}\n";
-		open(DAT, ">>result.txt") || die("Cannot Open Output File");
-		print DAT "$target $port\n";
-		close(DAT);
+		print DAT "${target}:${port}\n";
 		close($sock);
 			
 	} else {
@@ -75,6 +75,7 @@ print "    Started random seek\n";
 print "-"x50 ."\n";
 print "    port=${port}\t time=". $time*1000 . "ms\t threads=". $threads . "\n";
 print "-"x50 ."\n";
+open(DAT, ">>result.txt") || die("Cannot Open Output File");
 	
 while(1){
 	if (scalar(threads->list()) < $threads) {
