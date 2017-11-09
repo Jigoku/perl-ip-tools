@@ -45,25 +45,22 @@ sub genaddress(){
 
 
 sub connect {
-	my $target = &genaddress();
+	my $addr = &genaddress();
 		
 	my $sock = new IO::Socket::INET (
-		 PeerAddr => $target,
+		 PeerAddr => $addr,
 		 PeerPort => $port,
 		 Proto => 'tcp',
 		 Timeout => $time
-	);
+	) or warn "[${blue}-${clear}] $! ${addr}:${port}\n";
 
-	if($sock) {
-		print "[${green}+${clear}] Open\t${green}${target}:${port}${clear}\n";
-		print DAT "${target}:${port}\n";
+	if ($sock) {
+		print "[${green}+${clear}] Connected ${green}${addr}:${port}${clear}\n";
+		print DAT "${addr}:${port}\n";
 		close($sock);
-			
-	} else {
-		print "[${blue}-${clear}] Closed\t${target}:${port}\n";
 	}
 		
-		threads->self()->detach;
+	threads->self()->detach;
 }
 
 
