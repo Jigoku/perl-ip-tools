@@ -2,4 +2,4 @@
 A program to find random hosts on the deepweb
 
 ## Usage
-./trawler.pl <port> <timeout> <threads>
+`./trawler.pl <port> <timeout> <threads>`
