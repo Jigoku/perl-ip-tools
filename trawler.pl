@@ -31,14 +31,17 @@ sub genaddress(){
 	
 	my @n = ();
 	# filter experimental/multicast
-	$n[0] = int(rand(223)) + 1;                    
-	$n[1] = int(rand(254)) + 1;
-	$n[2] = int(rand(254)) + 1;
-	$n[3] = int(rand(254)) + 1;
+	$n[0] = int(rand(223)) + 1;    
+	
 	# discard loopbacks and private
-	if($n[0] == 127 || $n[0] == 172 || $n[0] == 192 || $n[0] == 10){
+	if($n[0] =~ m/^(127|172|192|10)$/ ) {
 		&genaddress();
-	} else {
+	} else {                
+		
+		$n[1] = int(rand(254)) + 1;
+		$n[2] = int(rand(254)) + 1;
+		$n[3] = int(rand(254)) + 1;
+
 		return join(".",@n);
 	}
 }
