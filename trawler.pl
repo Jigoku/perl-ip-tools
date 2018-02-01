@@ -60,6 +60,16 @@ sub connect {
 	if ($sock) {
 		print "[${green}+${clear}] Connected ${green}${addr}:${port}${clear}\n";
 		print DAT "${addr}:${port}\n";
+
+		
+		#curl -sI
+#		use LWP::UserAgent;
+#		my $ua = new LWP::UserAgent;
+#		my $url = "http://".$addr.":".$port;
+#		my $resp = $ua->get($url);
+#		print $resp->protocol, ' ', $resp->status_line, "\n";
+#		print $resp->headers_as_string, "\n";
+
 		close($sock);
 	}
 		
@@ -78,7 +88,7 @@ print "-"x50 ."\n";
 open(DAT, ">>result.txt") || die("Cannot Open Output File");
 	
 while(1){
-	if (scalar(threads->list()) < $threads) {
+	if (threads->list() < $threads) {
 		threads->new(\&connect);
 	}
 }
